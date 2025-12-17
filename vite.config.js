@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite';  // defineConfig - функция помошник вызванная из vite
 
 
 export default defineConfig({
