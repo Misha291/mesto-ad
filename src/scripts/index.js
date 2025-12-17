@@ -56,6 +56,7 @@ const handleAvatarFromSubmit = (evt) => {
   evt.preventDefault();
   profileAvatar.style.backgroundImage = `url(${avatarInput.value})`;
   closeModalWindow(avatarFormModalWindow);
+  avatarForm.reset(); 
 };
 
 const handleCardFormSubmit = (evt) => {
@@ -75,6 +76,7 @@ const handleCardFormSubmit = (evt) => {
   );
 
   closeModalWindow(cardFormModalWindow);
+  cardForm.reset(); // ← ДОБАВЛЕНО: очистка формы после отправки
 };
 
 // EventListeners
@@ -85,16 +87,19 @@ avatarForm.addEventListener("submit", handleAvatarFromSubmit);
 openProfileFormButton.addEventListener("click", () => {
   profileTitleInput.value = profileTitle.textContent;
   profileDescriptionInput.value = profileDescription.textContent;
+  clearValidation(profileForm, validationSettings); 
   openModalWindow(profileFormModalWindow);
 });
 
 profileAvatar.addEventListener("click", () => {
   avatarForm.reset();
+  clearValidation(avatarForm, validationSettings); 
   openModalWindow(avatarFormModalWindow);
 });
 
 openCardFormButton.addEventListener("click", () => {
   cardForm.reset();
+  clearValidation(cardForm, validationSettings); 
   openModalWindow(cardFormModalWindow);
 });
 
@@ -115,7 +120,7 @@ allPopups.forEach((popup) => {
   setCloseModalWindowEventListeners(popup);
 });
 
-
+// Настройки валидации для всех форм
 const validationSettings = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
