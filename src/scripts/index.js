@@ -6,13 +6,14 @@
   Из index.js не допускается что то экспортировать
 */
 
-import { initialCards } from "./cards.js";
+import { getCardList, getUserInfo, setUserInfo, addCard, updateAvatar, apiDeleteCard, changeLikeCardStatus } from "./components/api.js";
 import { createCardElement, deleteCard, likeCard } from "./components/card.js";
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js"; // импорт модуля валидации
 
 // DOM узлы
 const placesWrap = document.querySelector(".places__list");
+
 const profileFormModalWindow = document.querySelector(".popup_type_edit");
 const profileForm = profileFormModalWindow.querySelector(".popup__form");
 const profileTitleInput = profileForm.querySelector(".popup__input_type_name");
@@ -38,6 +39,7 @@ const avatarFormModalWindow = document.querySelector(".popup_type_edit-avatar");
 const avatarForm = avatarFormModalWindow.querySelector(".popup__form");
 const avatarInput = avatarForm.querySelector(".popup__input");
 
+//отрисовка окна попапа при клике на картинку 
 const handlePreviewPicture = ({ name, link }) => {
   imageElement.src = link;
   imageElement.alt = name;
@@ -45,39 +47,113 @@ const handlePreviewPicture = ({ name, link }) => {
   openModalWindow(imageModalWindow);
 };
 
+//кнопка меняет текст до момента ответа от сервера
+const renderLoading = (button, isLoading, defaultText) => {
+  if (isLoading) {
+    button.textContent = "Сохранение...";
+    button.disabled = true;
+  } else {
+    button.textContent = defaultText;
+    button.disabled = false;
+  }
+};
+
+
+//РЕДАКТИРОВАНИЕ ПРОФИЛЯ
 const handleProfileFormSubmit = (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = profileTitleInput.value;
-  profileDescription.textContent = profileDescriptionInput.value;
-  closeModalWindow(profileFormModalWindow);
+
+  const submitButton = evt.submitter;
+  renderLoading(submitButton, true, "Сохранить");
+
+  setUserInfo({
+    name: profileTitleInput.value,
+    about: profileDescriptionInput.value,
+  }).then((userData) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    closeModalWindow(profileFormModalWindow);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+      renderLoading(submitButton, false, "Сохранить");
+    });
 };
 
+//АВАТАР
 const handleAvatarFromSubmit = (evt) => {
   evt.preventDefault();
-  profileAvatar.style.backgroundImage = `url(${avatarInput.value})`;
-  closeModalWindow(avatarFormModalWindow);
-  avatarForm.reset(); 
+
+  const submitButton = evt.submitter;
+  renderLoading(submitButton, true, "Сохранить");
+
+  updateAvatar(avatarInput.value)
+    .then((userData) => {
+      profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
+      closeModalWindow(avatarFormModalWindow);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(submitButton, false, "Сохранить");
+    });
 };
 
+//УДАЛЕНИЕ КАРТОЧКИ
+const handleDeleteCard = (cardId, cardElement) => {
+  apiDeleteCard(cardId)
+    .then(() => {
+      deleteCard(cardElement);
+    })
+    .catch((err) => {
+      console.log(err); 
+    });
+};
+
+//ЛАЙКИ
+const handleLikeCard = (cardId, likeButton, likeCount) => {
+  const isLiked = likeButton.classList.contains("card__like-button_is-active"); //узнаем лайкнута ли карточка
+
+  changeLikeCardStatus(cardId, isLiked)
+    .then((updatedCard) => {
+      likeCard(likeButton);
+      likeCount.textContent = updatedCard.likes.length;
+    })
+    .catch((err) => {
+      console.log(err); 
+    });
+};
+
+//ДОБАВЛЕНИЕ КАРТОЧКИ
 const handleCardFormSubmit = (evt) => {
   evt.preventDefault();
-  placesWrap.prepend(
-    createCardElement(
-      {
-        name: cardNameInput.value,
-        link: cardLinkInput.value,
-      },
-      {
-        onPreviewPicture: handlePreviewPicture,
-        onLikeIcon: likeCard,
-        onDeleteCard: deleteCard,
-      }
-    )
-  );
 
-  closeModalWindow(cardFormModalWindow);
-  cardForm.reset(); // ← ДОБАВЛЕНО: очистка формы после отправки
+  const submitButton = evt.submitter;
+  renderLoading(submitButton, true, "Создать");
+
+  addCard({
+    name: cardNameInput.value,
+    link: cardLinkInput.value,
+  })
+    .then((cardFormServer) => {
+      placesWrap.prepend(
+        createCardElement(cardFormServer, 
+          { onPreviewPicture: handlePreviewPicture, onLikeIcon: handleLikeCard, onDeleteCard: handleDeleteCard }, 
+          userId)
+    );
+    closeModalWindow(cardFormModalWindow);
+    })
+    .catch((err) => {
+      console.log(err); 
+    })
+    .finally(() => {
+      renderLoading(submitButton, false, "Создать");
+    });
 };
+
 
 // EventListeners
 profileForm.addEventListener("submit", handleProfileFormSubmit);
@@ -103,17 +179,6 @@ openCardFormButton.addEventListener("click", () => {
   openModalWindow(cardFormModalWindow);
 });
 
-// отображение карточек
-initialCards.forEach((data) => {
-  placesWrap.append(
-    createCardElement(data, {
-      onPreviewPicture: handlePreviewPicture,
-      onLikeIcon: likeCard,
-      onDeleteCard: deleteCard,
-    })
-  );
-});
-
 //настраиваем обработчики закрытия попапов
 const allPopups = document.querySelectorAll(".popup");
 allPopups.forEach((popup) => {
@@ -131,3 +196,32 @@ const validationSettings = {
 };
 
 enableValidation(validationSettings);  // включение валидации для всех форм
+
+let userId;
+
+Promise.all([getUserInfo(), getCardList()])
+  .then(([userData, cards]) => {
+
+      userId = userData._id; //чтобы сравнить id карточек и понять можно ли с ней соврешать действия 
+
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      profileAvatar.style.backgroundImage = `url(${userData.avatar})`; 
+
+      // Код отвечающий за отрисовку полученных данных
+      cards.forEach((cardData) => {
+        placesWrap.append(
+          createCardElement(cardData, {
+
+          onLikeIcon: handleLikeCard,
+          onDeleteCard: handleDeleteCard,               //ссылки на функции 
+          onPreviewPicture: handlePreviewPicture,
+          },
+          userId
+          )
+        );
+
+      });
+  }).catch((err) => {
+      console.log(err); 
+    });
