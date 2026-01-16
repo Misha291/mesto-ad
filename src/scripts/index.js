@@ -48,9 +48,9 @@ const handlePreviewPicture = ({ name, link }) => {
 };
 
 //кнопка меняет текст до момента ответа от сервера
-const renderLoading = (button, isLoading, defaultText) => {
+const renderLoading = (button, isLoading, loadingText, defaultText) => {
   if (isLoading) {
-    button.textContent = "Сохранение...";
+    button.textContent = loadingText;
     button.disabled = true;
   } else {
     button.textContent = defaultText;
@@ -64,7 +64,7 @@ const handleProfileFormSubmit = (evt) => {
   evt.preventDefault();
 
   const submitButton = evt.submitter;
-  renderLoading(submitButton, true, "Сохранить");
+  renderLoading(submitButton, true, "Сохранение...", "Сохранить");
 
   setUserInfo({
     name: profileTitleInput.value,
@@ -78,7 +78,7 @@ const handleProfileFormSubmit = (evt) => {
     console.log(err);
   })
   .finally(() => {
-      renderLoading(submitButton, false, "Сохранить");
+      renderLoading(submitButton, false, "Сохранение...", "Сохранить");
     });
 };
 
@@ -87,7 +87,7 @@ const handleAvatarFromSubmit = (evt) => {
   evt.preventDefault();
 
   const submitButton = evt.submitter;
-  renderLoading(submitButton, true, "Сохранить");
+  renderLoading(submitButton, true, "Сохранение...", "Сохранить");
 
   updateAvatar(avatarInput.value)
     .then((userData) => {
@@ -98,7 +98,7 @@ const handleAvatarFromSubmit = (evt) => {
       console.log(err);
     })
     .finally(() => {
-      renderLoading(submitButton, false, "Сохранить");
+      renderLoading(submitButton, false, "Сохранение...", "Сохранить");
     });
 };
 
@@ -132,7 +132,7 @@ const handleCardFormSubmit = (evt) => {
   evt.preventDefault();
 
   const submitButton = evt.submitter;
-  renderLoading(submitButton, true, "Создать");
+  renderLoading(submitButton, true, "Создание...", "Создать");
 
   addCard({
     name: cardNameInput.value,
@@ -150,7 +150,7 @@ const handleCardFormSubmit = (evt) => {
       console.log(err); 
     })
     .finally(() => {
-      renderLoading(submitButton, false, "Создать");
+      renderLoading(submitButton, false, "Создание...", "Создать");
     });
 };
 
@@ -225,3 +225,4 @@ Promise.all([getUserInfo(), getCardList()])
   }).catch((err) => {
       console.log(err); 
     });
+
