@@ -161,6 +161,15 @@
         </div>
       </div>
 
+      <!-- ДОБАВЛЕННЫЙ popup информации -->
+      <div class="popup popup_type_info">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Информация о карточке</h3>
+          <ul class="popup__info-list"></ul>
+        </div>
+      </div>
+
     </div>
 
     <script src="./src/scripts/index.js" defer type="module"></script>
@@ -169,8 +178,12 @@
       <li class="places__item card">
         <img class="card__image" src="" alt="" />
 
-
         <div class="card__control">
+          <button
+            type="button"
+            class="card__control-button card__control-button_type_info"
+          ></button>
+
           <button
             type="button"
             class="card__control-button card__control-button_type_delete"
@@ -187,6 +200,19 @@
       </li>
     </template>
 
+    <!--  ДОБАВЛЕННЫЕ templates -->
+    <template id="popup-info-definition-template">
+      <li class="popup__info-item">
+        <span class="popup__definition-label"></span>
+        <span class="popup__definition-value"></span>
+      </li>
+    </template>
+
+    <template id="popup-info-user-preview-template">
+      <li class="popup__user-preview">
+        <span class="popup__user-name"></span>
+      </li>
+    </template>
 
   </body>
 </html>
