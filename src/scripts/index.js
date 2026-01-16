@@ -103,15 +103,22 @@ const handleAvatarFromSubmit = (evt) => {
 };
 
 //УДАЛЕНИЕ КАРТОЧКИ
-const handleDeleteCard = (cardId, cardElement) => {
+const handleDeleteCard = (cardId, cardElement, deleteButton) => {
+  
+  renderLoading(deleteButton, true, "Удаление...", "Удалить");
+
   apiDeleteCard(cardId)
     .then(() => {
       deleteCard(cardElement);
     })
     .catch((err) => {
-      console.log(err); 
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(deleteButton, false, "Удаление...", "Удалить");
     });
 };
+
 
 //ЛАЙКИ
 const handleLikeCard = (cardId, likeButton, likeCount) => {
