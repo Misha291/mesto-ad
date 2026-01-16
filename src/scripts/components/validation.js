@@ -33,7 +33,7 @@ const checkInputValidity = (form, input, settings) => {
 
 
 const hasInvalidInput = (inputList) => {
-  return Array.from(inputList).some((input) => !input.validity.valid);
+  return Array.from(inputList).some((input) => !input.validity.valid);   // проверяет, есть ли среди переданных полей ввода (inputList) хотя бы одно невалидное
 };
 
 
@@ -51,7 +51,7 @@ const enableSubmitButton = (button, settings) => {
 
 const toggleButtonState = (inputList, button, settings) => {
   if (hasInvalidInput(inputList)) {
-    disableSubmitButton(button, settings); // блокирует кнопку серой + разблокирует
+    disableSubmitButton(button, settings); // блокирует кнопку + серой 
   } else {
     enableSubmitButton(button, settings); // цветная + разблокирует
   }
