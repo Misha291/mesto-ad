@@ -45,7 +45,7 @@ export const createCardElement = (
   // удаление
   if (onDeleteCard) {
     deleteButton.addEventListener("click", () => {
-      onDeleteCard(data._id, cardElement);
+      onDeleteCard(data._id, cardElement, deleteButton);
     });
   }
 
