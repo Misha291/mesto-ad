@@ -39,6 +39,12 @@ const avatarFormModalWindow = document.querySelector(".popup_type_edit-avatar");
 const avatarForm = avatarFormModalWindow.querySelector(".popup__form");
 const avatarInput = avatarForm.querySelector(".popup__input");
 
+const cardInfoModalWindow = document.querySelector(".popup_type_info");
+const cardInfoModalInfoList = cardInfoModalWindow.querySelector(".popup__info-list");
+const infoDefinitionTemplate = document.getElementById("popup-info-definition-template").content;
+const infoUserPreviewTemplate = document.getElementById("popup-info-user-preview-template").content;
+
+
 //отрисовка окна попапа при клике на картинку 
 const handlePreviewPicture = ({ name, link }) => {
   imageElement.src = link;
@@ -56,6 +62,70 @@ const renderLoading = (button, isLoading, loadingText, defaultText) => {
     button.textContent = defaultText;
     button.disabled = false;
   }
+};
+
+
+const formatDate = (date) =>
+  date.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const createInfoString = (label, value) => {
+  const item = infoDefinitionTemplate
+    .querySelector(".popup__info-item")
+    .cloneNode(true);
+
+  item.querySelector(".popup__definition-label").textContent = label;
+  item.querySelector(".popup__definition-value").textContent = value;
+
+  return item;
+};
+
+const createUserPreview = (user) => {
+  const item = infoUserPreviewTemplate
+    .querySelector(".popup__user-preview")
+    .cloneNode(true);
+
+  item.querySelector(".popup__user-name").textContent = user.name;
+
+  return item;
+};
+
+const handleInfoClick = (cardId) => {
+  getCardList()
+    .then((cards) => {
+      const cardData = cards.find((card) => card._id === cardId); //если совпали id он возвращает объект карточки 
+
+      cardInfoModalInfoList.innerHTML = "";
+
+      cardInfoModalInfoList.append(
+        createInfoString("Описание:", cardData.name),
+        createInfoString(
+          "Дата создания:",
+          formatDate(new Date(cardData.createdAt))
+        ),
+        createInfoString("Владелец:", cardData.owner.name),
+        createInfoString("Количество лайков:", cardData.likes.length)
+      );
+
+      if (cardData.likes.length > 0) {
+        const likesTitle = document.createElement("li");
+        likesTitle.textContent = "Лайкнули:";
+        likesTitle.classList.add("popup__likes-title");
+        cardInfoModalInfoList.append(likesTitle);
+      }
+
+      cardData.likes.forEach((user) => {
+        cardInfoModalInfoList.append(createUserPreview(user));
+      });
+
+      openModalWindow(cardInfoModalWindow);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 
@@ -104,7 +174,7 @@ const handleAvatarFromSubmit = (evt) => {
 
 //УДАЛЕНИЕ КАРТОЧКИ
 const handleDeleteCard = (cardId, cardElement, deleteButton) => {
-  
+
   renderLoading(deleteButton, true, "Удаление...", "Удалить");
 
   apiDeleteCard(cardId)
@@ -118,7 +188,6 @@ const handleDeleteCard = (cardId, cardElement, deleteButton) => {
       renderLoading(deleteButton, false, "Удаление...", "Удалить");
     });
 };
-
 
 //ЛАЙКИ
 const handleLikeCard = (cardId, likeButton, likeCount) => {
@@ -147,8 +216,13 @@ const handleCardFormSubmit = (evt) => {
   })
     .then((cardFormServer) => {
       placesWrap.prepend(
-        createCardElement(cardFormServer, 
-          { onPreviewPicture: handlePreviewPicture, onLikeIcon: handleLikeCard, onDeleteCard: handleDeleteCard }, 
+        createCardElement(
+          cardFormServer, 
+          { onPreviewPicture: handlePreviewPicture,
+            onLikeIcon: handleLikeCard,
+            onDeleteCard: handleDeleteCard,
+            onInfoClick: handleInfoClick
+          }, 
           userId)
     );
     closeModalWindow(cardFormModalWindow);
@@ -223,6 +297,7 @@ Promise.all([getUserInfo(), getCardList()])
           onLikeIcon: handleLikeCard,
           onDeleteCard: handleDeleteCard,               //ссылки на функции 
           onPreviewPicture: handlePreviewPicture,
+          onInfoClick: handleInfoClick,
           },
           userId
           )
