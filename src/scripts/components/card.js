@@ -15,22 +15,22 @@ const getTemplate = () => {
 
 export const createCardElement = (
   data,
-  { onPreviewPicture, onLikeIcon, onDeleteCard },
+  { onPreviewPicture, onLikeIcon, onDeleteCard, onInfoClick },
   userId
 ) => {
   const cardElement = getTemplate();
   const likeButton = cardElement.querySelector(".card__like-button");
   const likeCount = cardElement.querySelector(".card__like-count");
   const deleteButton = cardElement.querySelector(".card__control-button_type_delete");
+  const infoButton = cardElement.querySelector(".card__control-button_type_info");
   const cardImage = cardElement.querySelector(".card__image");
-
 
   // заполняем карточку
   cardImage.style.backgroundImage = `url(${data.link})`;
   cardElement.querySelector(".card__title").textContent = data.name;
-  likeCount.textContent = data.likes.length; //количество лайков
+  likeCount.textContent = data.likes.length;
 
-  // ПРОВЕРКА ПРАВ
+  // проверка прав
   if (data.owner && data.owner._id !== userId) {
     deleteButton.remove();
   }
@@ -57,6 +57,13 @@ export const createCardElement = (
         link: data.link,
       })
     );
+  }
+
+  // информация о карточке
+  if (onInfoClick) {
+    infoButton.addEventListener("click", () => {
+      onInfoClick(data._id);
+    });
   }
 
   return cardElement;
