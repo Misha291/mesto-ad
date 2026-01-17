@@ -1,7 +1,7 @@
 export const config = {
-  baseUrl: "https://mesto.nomoreparties.co/v1/apf-cohort-202",
+  baseUrl: "https://mesto.nomoreparties.co/v1/",
   headers: {
-    authorization: "78ae4154-0004-4faf-9ed2-fb4574eb9069",
+    authorization: "",
     "Content-Type": "application/json",
   },
 };
