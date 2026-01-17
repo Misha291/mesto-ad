@@ -9,7 +9,8 @@ export const deleteCard = (cardElement) => {
 const getTemplate = () => {
   return document
     .getElementById("card-template")
-    .content.querySelector(".card")
+    .content
+    .querySelector(".card")
     .cloneNode(true);
 };
 
@@ -19,47 +20,44 @@ export const createCardElement = (
   userId
 ) => {
   const cardElement = getTemplate();
+
+  const cardImage = cardElement.querySelector(".card__image");
+  const cardTitle = cardElement.querySelector(".card__title");
   const likeButton = cardElement.querySelector(".card__like-button");
   const likeCount = cardElement.querySelector(".card__like-count");
   const deleteButton = cardElement.querySelector(".card__control-button_type_delete");
   const infoButton = cardElement.querySelector(".card__control-button_type_info");
-  const cardImage = cardElement.querySelector(".card__image");
 
-  // заполняем карточку
-  cardImage.style.backgroundImage = `url(${data.link})`;
-  cardElement.querySelector(".card__title").textContent = data.name;
+  cardImage.src = data.link;
+  cardImage.alt = data.name;
+  cardTitle.textContent = data.name;
   likeCount.textContent = data.likes.length;
 
-  // проверка прав
-  if (data.owner && data.owner._id !== userId) {
+  if (data.owner && data.owner._id !== userId && deleteButton) {
     deleteButton.remove();
   }
 
-  // лайк
   if (onLikeIcon) {
     likeButton.addEventListener("click", () => {
       onLikeIcon(data._id, likeButton, likeCount);
     });
   }
 
-  // удаление
   if (onDeleteCard) {
     deleteButton.addEventListener("click", () => {
-      onDeleteCard(data._id, cardElement, deleteButton);
+      onDeleteCard(data._id, cardElement);
     });
   }
 
-  // превью картинки
   if (onPreviewPicture) {
-    cardImage.addEventListener("click", () =>
+    cardImage.addEventListener("click", () => {
       onPreviewPicture({
         name: data.name,
         link: data.link,
-      })
-    );
+      });
+    });
   }
 
-  // информация о карточке
   if (onInfoClick) {
     infoButton.addEventListener("click", () => {
       onInfoClick(data._id);
