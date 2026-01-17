@@ -23,12 +23,12 @@
         <section class="profile page__section">
           <div
             class="profile__image"
-            style="background-image: url('./src/images/avatar.jpg')"
+            style="background-image: none"
           ></div>
           <div class="profile__info">
-            <h1 class="profile__title">Жак-Ив Кусто</h1>
+            <h1 class="profile__title"></h1>
             <button class="profile__edit-button" type="button"></button>
-            <p class="profile__description">Исследователь океана</p>
+            <p class="profile__description"></p>
           </div>
           <button class="profile__add-button" type="button"></button>
         </section>
@@ -52,10 +52,10 @@
                 id="user-name"
                 class="popup__input popup__input_type_name"
                 placeholder="Имя"
+                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
                 minlength="2"
                 maxlength="40"
-                pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$"
-                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+                pattern="^[A-Za-zА-Яа-яЁё\s\-]+$"
                 required
               />
               <span class="popup__error" id="user-name-error"></span>
@@ -75,6 +75,8 @@
             </label>
             <button
               type="submit"
+              data-default-text="Сохранить"
+              data-loading-text="Сохранение..."
               class="button popup__button popup__button_disabled"
               disabled
             >
@@ -95,11 +97,11 @@
                 name="place-name"
                 id="place-name"
                 class="popup__input popup__input_type_card-name"
+                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
                 placeholder="Название"
                 minlength="2"
                 maxlength="30"
-                pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$"
-                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+                pattern="^[A-Za-zА-Яа-яЁё\s\-]+$"
                 required
               />
               <span class="popup__error" id="place-name-error"></span>
@@ -118,6 +120,8 @@
             <button
               type="submit"
               class="button popup__button popup__button_disabled"
+              data-default-text="Создать"
+              data-loading-text="Создание..."
               disabled
             >
               Создать
@@ -133,6 +137,21 @@
           <p class="popup__caption"></p>
         </div>
       </div>
+
+<!--      <div class="popup popup_type_remove-card">-->
+<!--        <div class="popup__content">-->
+<!--          <button type="button" class="popup__close"></button>-->
+<!--          <h3 class="popup__title">Вы уверены?</h3>-->
+<!--          <form class="popup__form" name="remove-card" novalidate>-->
+<!--            <button-->
+<!--              type="submit"-->
+<!--              class="button popup__button"-->
+<!--            >-->
+<!--              Да-->
+<!--            </button>-->
+<!--          </form>-->
+<!--        </div>-->
+<!--      </div>-->
 
       <div class="popup popup_type_edit-avatar">
         <div class="popup__content">
@@ -152,6 +171,8 @@
             </label>
             <button
               type="submit"
+              data-default-text="Сохранить"
+              data-loading-text="Сохранение..."
               class="button popup__button popup__button_disabled"
               disabled
             >
@@ -161,59 +182,45 @@
         </div>
       </div>
 
-      <!-- ДОБАВЛЕННЫЙ popup информации -->
       <div class="popup popup_type_info">
-        <div class="popup__content">
+        <div class="popup__content popup__content_content_info">
           <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Информация о карточке</h3>
-          <ul class="popup__info-list"></ul>
+          <h3 class="popup__title"></h3>
+          <dl class="popup__info"></dl>
+          <h4 class="popup__text"></h4>
+          <ul class="popup__list"></ul>
         </div>
       </div>
-
     </div>
 
     <script src="./src/scripts/index.js" defer type="module"></script>
 
     <template id="card-template">
       <li class="places__item card">
-        <div class="card__image"></div>
-
-
+        <img class="card__image" src="" alt="" />
         <div class="card__control">
-          <button
-            type="button"
-            class="card__control-button card__control-button_type_info"
-          ></button>
-
-          <button
-            type="button"
-            class="card__control-button card__control-button_type_delete"
-          ></button>
+          <button type="button" class="card__control-button card__control-button_type_info"></button>
+          <button type="button" class="card__control-button card__control-button_type_delete"></button>
         </div>
-
         <div class="card__description">
           <h2 class="card__title"></h2>
           <div class="card__likes">
             <button type="button" class="card__like-button"></button>
-            <span class="card__like-count">0</span>
+            <p class="card__like-count"></p>
           </div>
         </div>
       </li>
     </template>
 
-    <!--  ДОБАВЛЕННЫЕ templates -->
     <template id="popup-info-definition-template">
-      <li class="popup__info-item">
-        <span class="popup__definition-label"></span>
-        <span class="popup__definition-value"></span>
-      </li>
+      <div class="popup__info-item">
+        <dt class="popup__info-term"></dt>
+        <dd class="popup__info-description"></dd>
+      </div>
     </template>
-
+    
     <template id="popup-info-user-preview-template">
-      <li class="popup__user-preview">
-        <span class="popup__user-name"></span>
-      </li>
+      <li class="popup__list-item popup__list-item_type_badge"></li>
     </template>
-
   </body>
 </html>
