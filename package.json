@@ -1,0 +1,17 @@
+{
+  "name": "mesto-ad-main",
+  "version": "1.0.0",
+  "description": "Проект Mesto с валидацией форм",
+  "main": "index.js",
+ "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Misha Zaharov",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^7.3.0"
+}
+}
