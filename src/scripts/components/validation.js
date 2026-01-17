@@ -33,7 +33,11 @@ const checkInputValidity = (form, input, settings) => {
 
 
 const hasInvalidInput = (inputList) => {
+<<<<<<< HEAD
   return Array.from(inputList).some((input) => !input.validity.valid);   // проверяет, есть ли среди переданных полей ввода (inputList) хотя бы одно невалидное
+=======
+  return Array.from(inputList).some((input) => !input.validity.valid);
+>>>>>>> 0ef282292ea0eb654fe6aae43178ecf6e3c9699e
 };
 
 
@@ -51,7 +55,11 @@ const enableSubmitButton = (button, settings) => {
 
 const toggleButtonState = (inputList, button, settings) => {
   if (hasInvalidInput(inputList)) {
+<<<<<<< HEAD
     disableSubmitButton(button, settings); // блокирует кнопку + серой 
+=======
+    disableSubmitButton(button, settings); // блокирует кнопку серой + разблокирует
+>>>>>>> 0ef282292ea0eb654fe6aae43178ecf6e3c9699e
   } else {
     enableSubmitButton(button, settings); // цветная + разблокирует
   }
@@ -93,4 +101,8 @@ export const enableValidation = (settings) => {
   formList.forEach((form) => {
     setEventListeners(form, settings);
   });
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 0ef282292ea0eb654fe6aae43178ecf6e3c9699e
